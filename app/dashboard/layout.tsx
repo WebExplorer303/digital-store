@@ -33,12 +33,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-<nav className="flex flex-col md:flex-row md:items-center md:justify-center gap-2">
-  <button className="md:hidden p-2 bg-gray-100 rounded">Menu</button>
-  <div className="hidden md:flex md:flex-row gap-2 md:gap-6">
-    <Link href="/dashboard/subscriptions" className="...">Subscriptions</Link>
-    <Link href="/dashboard/analytics" className="...">Analytics</Link>
-  </div>
+<nav className="flex flex-wrap justify-center gap-1 md:gap-6">
+  <Link
+    href="/dashboard/subscriptions"
+    className="px-3 py-1 text-sm md:text-base md:px-4 md:py-2.5 text-gray-700 dark:text-gray-200 hover:bg-blue-50 rounded-lg transition-all"
+  >
+    Subscriptions
+  </Link>
+  <Link
+    href="/dashboard/analytics"
+    className="px-3 py-1 text-sm md:text-base md:px-4 md:py-2.5 text-gray-700 dark:text-gray-200 hover:bg-blue-50 rounded-lg transition-all"
+  >
+    Analytics
+  </Link>
 </nav>
       </aside>
 
