@@ -46,7 +46,7 @@ const subscriptions = await getUserSubscriptions(userId);
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{sub.cycle}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{sub.nextRenewal}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <Link href={`/dashboard/subscriptions/EditPage`} className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                <Link href={`/dashboard/subscriptions/edit-sub`} className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
                                     Edit
                                 </Link>
                             </td>
