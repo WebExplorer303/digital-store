@@ -56,6 +56,7 @@ export async function EditSubscription(prevState: any, formData: FormData) {
         cost: parseFloat(formData.get("cost") as string) || 0,
         cycle: formData.get("cycle") as string,
         nextRenewal: formData.get("nextRenewal") as string,
+        id: formData.get("id") as string,
         userId
     }
 
@@ -64,17 +65,15 @@ export async function EditSubscription(prevState: any, formData: FormData) {
     }
 
     try {
-        // Use Prisma's .create() method directly
 await prisma.product.update({
     where: {
-        id: userId, // You need the unique ID of the record you're changing
+        id: payload.id, 
     },
     data: {
         name: payload.name,
         cost: payload.cost,
         cycle: payload.cycle,
         nextRenewal: payload.nextRenewal,
-        // userId is typically not changed, so you don't need to include it
     }
 });
 
