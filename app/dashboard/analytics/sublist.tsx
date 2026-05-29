@@ -3,50 +3,26 @@
 import { useState } from "react";
 
 export default function SubscriptionList({ subscriptions }: { subscriptions: any[] }) {
-  const [filter, setFilter] = useState("all");
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const filteredSubs = subscriptions.filter((sub) => {
+  const fifteenDaysFromNow = new Date(today);
+  fifteenDaysFromNow.setDate(today.getDate() + 15);
 
+  const filteredSubs = subscriptions.filter((sub) => {
     const dateString = typeof sub.nextRenewal === "string" ? sub.nextRenewal.split("T")[0] : sub.nextRenewal;
     const renewalDate = new Date(`${dateString}T00:00:00`);
     
-    if (filter === "upcoming") return renewalDate >= today;
-    if (filter === "overdue") return renewalDate < today;
-    return true; 
+    return renewalDate >= today && renewalDate <= fifteenDaysFromNow;
   });
 
   return (
     <div>
-      <div className="flex gap-2 mb-4">
-        <button 
-          onClick={() => setFilter("all")} 
-          className={`px-3 py-1 text-sm rounded transition-colors ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-        >
-          All
-        </button>
-        <button 
-          onClick={() => setFilter("upcoming")} 
-          className={`px-3 py-1 text-sm rounded transition-colors ${filter === 'upcoming' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-        >
-          Upcoming
-        </button>
-        <button 
-          onClick={() => setFilter("overdue")} 
-          className={`px-3 py-1 text-sm rounded transition-colors ${filter === 'overdue' ? 'bg-red-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-        >
-          Overdue
-        </button>
-      </div>
-
       <div className="grid gap-3">
         {filteredSubs.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No subscriptions found.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No upcoming subscriptions found.</p>
         ) : (
           filteredSubs.map((sub) => {
-       
             const dateString = typeof sub.nextRenewal === "string" ? sub.nextRenewal.split("T")[0] : sub.nextRenewal;
             const localizedDate = new Date(`${dateString}T00:00:00`);
 

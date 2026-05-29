@@ -39,11 +39,11 @@ export default async function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Monthly</p>
-                    <p className="text-2xl font-bold text-blue-600">${totalMonthly.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-blue-600">₹{totalMonthly.toFixed(2)}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Yearly</p>
-                    <p className="text-2xl font-bold text-green-600">${totalYearly.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-green-600">₹{totalYearly.toFixed(2)}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Active Subs</p>

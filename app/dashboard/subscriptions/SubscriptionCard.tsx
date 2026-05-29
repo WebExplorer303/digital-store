@@ -27,7 +27,7 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
       <div className="space-y-2.5">
         <div className="flex items-center gap-2 text-sm text-slate-600">
           <DollarSign className="w-4 h-4 text-slate-400" />
-          <span className="font-semibold text-slate-900 text-base">${subscription.cost.toFixed(2)}</span>
+          <span className="font-semibold text-slate-900 text-base">₹{subscription.cost.toFixed(2)}</span>
           <span className="text-slate-400 text-xs">/ {subscription.cycle === 'monthly' ? 'mo' : 'yr'}</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-slate-500">

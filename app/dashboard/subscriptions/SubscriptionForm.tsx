@@ -5,7 +5,6 @@ import { addSubscription } from './actions';
 import { Loader2, PlusCircle } from 'lucide-react';
 
 export function SubscriptionForm() {
-  // useActionState handles the pending state and response from your server action
   const [state, action, isPending] = useActionState(addSubscription, null);
 
   return (
@@ -22,7 +21,7 @@ export function SubscriptionForm() {
         </div>
         
         <div className="space-y-2">
-          <label htmlFor="cost" className="text-sm font-medium text-slate-700">Monthly Cost ($)</label>
+          <label htmlFor="cost" className="text-sm font-medium text-slate-700">Monthly Cost (₹)</label>
           <input
             required
             type="number"
