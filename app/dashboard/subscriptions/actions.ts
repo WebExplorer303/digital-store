@@ -100,3 +100,42 @@ export async function DeleteSubscription(id: string) {
 
     revalidatePath("/dashboard");
 }
+
+
+export async function checkAndRequestRenewalUpdates(userId: string) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const subscriptions = await prisma.product.findMany({
+    where: { userId: userId },
+  });
+
+  const overdueSubscriptions = subscriptions.filter((sub) => {
+    const dateString = typeof sub.nextRenewal === "string" ? sub.nextRenewal.split("T")[0] : sub.nextRenewal;
+    const renewalDate = new Date(`${dateString}T00:00:00`);
+    return renewalDate < today;
+  });
+
+
+  if (overdueSubscriptions.length === 0) return;
+
+  await prisma.$transaction(
+    overdueSubscriptions.map((sub) => {
+      const dateString = typeof sub.nextRenewal === "string" ? sub.nextRenewal.split("T")[0] : sub.nextRenewal;
+      const renewalDate = new Date(`${dateString}T00:00:00`);
+
+      while (renewalDate < today) {
+        if (sub.cycle === "monthly") {
+          renewalDate.setMonth(renewalDate.getMonth() + 1);
+        } else if (sub.cycle === "yearly") {
+          renewalDate.setFullYear(renewalDate.getFullYear() + 1);
+        }
+      }
+
+      return prisma.product.update({
+        where: { id: sub.id },
+        data: { nextRenewal: renewalDate.toISOString() },
+      });
+    })
+  );
+}

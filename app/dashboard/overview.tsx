@@ -28,8 +28,7 @@ export async function Overview(){
         <>
         <div className="max-w-4xl">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Overview</h1>
-                <p className="text-gray-500 mt-2">Track your subscription growth and monthly burn rate.</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Analytics</h1>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

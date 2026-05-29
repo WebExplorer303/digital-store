@@ -11,7 +11,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <aside className="w-full md:w-64 bg-white dark:bg-gray-800 border-b md:border-r border-gray-200 dark:border-gray-700 flex flex-col">
         <div className="p-4 md:p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col gap-4">
           <div className="flex items-center justify-between w-full">
-           <span className="font-semibold text-gray-700 dark:text-gray-300 p-4">Profile</span>
+       <div className="block font-semibold text-gray-700 dark:text-gray-300 p-4">
+  Profile
+</div>
             <ClerkProvider>
               <UserButton userProfileMode="modal" />
             </ClerkProvider>
