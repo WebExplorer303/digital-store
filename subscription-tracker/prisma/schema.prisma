@@ -1,0 +1,19 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  cost        Float
+  cycle       String
+  nextRenewal String
+
+  // Change this to match exactly what Next.js is looking for: lowercase 'product'
+  @@map("product") 
+}
