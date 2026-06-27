@@ -1,65 +1,100 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import Fuse from 'fuse.js';
+import Link from 'next/link';
+import { auth } from "@/lib/firebase"
+import { Product } from "@/types/product"
+
+export default function ProductGrid() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") ?? "";
+
+  const [allData, setAllData] = useState<Product[]>([]);
+  const [fuse, setFuse] = useState<Fuse<Product> | null>(null);
+  const [loading, setLoading] = useState(true);
+const [currentUser, setCurrentUser] = useState(auth.currentUser);
+
+useEffect(() => {
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    setCurrentUser(user);
+  });
+  return () => unsubscribe();
+}, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Product[];
+        setAllData(data);
+        setFuse(new Fuse(data, { keys: ["title", "description"], threshold: 0.3 }));
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+ const results = useMemo<Product[]>(() => {
+  const base = !query.trim() || !fuse ? allData : fuse.search(query).map((r) => r.item);
+  
+  return base.filter(p =>
+    !p.ownedBy?.includes(currentUser?.uid ?? "") && 
+    p.sellerId !== currentUser?.uid 
+  );
+}, [query, fuse, allData, currentUser]);
+
+  if (loading) {
+    return <div className="flex justify-center p-10 text-stone-400 font-light tracking-wide">Loading your marketplace...</div>;
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="max-w-[1600px] mx-auto px-8 py-16">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-14">
+    {results.map((item) => (
+      <Link key={item.id} href={`/products/${item.id}`} className="group block">
+        <div className="bg-slate-800 border border-slate-700/50 rounded-2xl overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:border-slate-600">
+          
+        
+          <div className="relative overflow-hidden aspect-[4/3] bg-slate-700">
+            <img
+              src={item.imageUrl}
+              alt={item.title}
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="absolute top-3 left-3 text-[10px] font-semibold uppercase tracking-widest bg-slate-900/80 backdrop-blur-sm text-slate-300 px-2.5 py-1 rounded-full">
+              {item.category}
+            </span>
+            <span className="absolute bottom-3 right-3 text-xs font-bold text-white bg-cyan-400 text-slate-900  px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              View →
+            </span>
+          </div>
+
+         
+          <div className="p-5">
+            <h3 className="font-semibold text-base text-white leading-snug mb-1.5 group-hover:text-cyan-400 transition-colors duration-200">
+              {item.title}
+            </h3>
+            <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed mb-4">
+              {item.summary}
+            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-cyan-400 font-bold text-lg">${item.price}</span>
+              <span className="text-xs text-slate-500 font-medium">Instant download</span>
+            </div>
+          </div>
+
         </div>
-      </main>
-    </div>
+      </Link>
+    ))}
+  </div>
+</div>
   );
 }
