@@ -17,7 +17,6 @@ export default function NewProductForm({ onSuccess }: NewProductFormProps) {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
-  const [ownedBy, setOwnedBy] = useState([""]);
 
   const router = useRouter();
 
@@ -59,8 +58,7 @@ const newProduct = {
   imageUrl,
   downloadUrl,
   createdAt: new Date(),
-  sellerId: user.uid,
-  ownedBy: [user.uid], 
+  sellerId: user.uid, 
 };
 
 
