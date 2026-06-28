@@ -50,7 +50,6 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
             <Image src="/logo.svg" alt="Digital Store" width={160} height={50} style={{ height: '36px', width: 'auto' }} className="md:!h-10" />
           </Link>
 
-        
           <Link href="/manage" className="hidden md:flex items-center gap-1.5 text-sm font-semibold text-stone-700 hover:bg-black/10 px-3 py-2.5 rounded-lg transition-colors">
             <i className="ti ti-package text-base" aria-hidden="true" />
             My Products
@@ -61,11 +60,9 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
           </Link>
         </div>
 
-       
         <div className="hidden md:block flex-1 w-[500px] absolute left-1/2 -translate-x-1/2">
           <SearchInput />
         </div>
-
 
         <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto">
           {isLoggedIn ? (
@@ -87,14 +84,33 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
           )}
         </div>
 
-       
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden ml-auto p-2.5 rounded-lg hover:bg-black/10 transition-colors"
-          aria-label="Toggle menu"
-        >
-          <i className={`ti ${mobileMenuOpen ? 'ti-x' : 'ti-menu-2'} text-2xl text-stone-700`} aria-hidden="true" />
-        </button>
+        <div className="flex md:hidden items-center gap-1.5 ml-auto">
+          {isLoggedIn ? (
+            <button
+              onClick={handleSignOut}
+              className="text-xs font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Sign out
+            </button>
+          ) : (
+            <>
+              <Link href="/login" className="text-xs font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-3 py-1.5 rounded-lg transition-colors">
+                Sign in
+              </Link>
+              <Link href="/sign-up" className="text-xs font-semibold text-white bg-stone-800 hover:bg-stone-700 px-3 py-1.5 rounded-lg transition-colors">
+                Sign up
+              </Link>
+            </>
+          )}
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg hover:bg-black/10 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <i className={`ti ${mobileMenuOpen ? 'ti-x' : 'ti-menu-2'} text-2xl text-stone-700`} aria-hidden="true" />
+          </button>
+        </div>
       </nav>
 
       {mobileMenuOpen && (
@@ -118,34 +134,6 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
               <i className="ti ti-shopping-cart text-base" aria-hidden="true" />
               Cart
             </Link>
-          </div>
-
-          <div className="flex flex-col gap-2 pt-2 border-t border-black/10">
-            {isLoggedIn ? (
-              <button
-                onClick={() => { closeMobileMenu(); handleSignOut(); }}
-                className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2.5 rounded-lg transition-colors text-center"
-              >
-                Sign out
-              </button>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  onClick={closeMobileMenu}
-                  className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2.5 rounded-lg transition-colors text-center"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  href="/sign-up"
-                  onClick={closeMobileMenu}
-                  className="text-sm font-semibold text-white bg-stone-800 hover:bg-stone-700 px-5 py-2.5 rounded-lg transition-colors text-center"
-                >
-                  Sign up
-                </Link>
-              </>
-            )}
           </div>
         </div>
       )}
