@@ -17,6 +17,8 @@ interface NavbarProps {
 
 export default function Navbar({ isLoggedIn }: NavbarProps) {
   const [showLogin, setShowLogin] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const handleSignOut = async () => {
     try {
       const response = await fetch("/api/logout", { method: "POST" });
@@ -29,67 +31,135 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
     }
   };
 
-const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
 
-useEffect(() => {
-  if (searchParams.get("showLogin") === "true") {
-    setShowLogin(true);
-  }
-}, [searchParams]);
+  useEffect(() => {
+    if (searchParams.get("showLogin") === "true") {
+      setShowLogin(true);
+    }
+  }, [searchParams]);
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   return (
     <>
-    <nav className="relative flex items-center px-6 py-6 bg-[#9cb3b8] border-b border-black/10">
-      <div className="flex items-center gap-1 shrink-0">
-<Link href="/" className="flex items-center px-3 py-2.5 rounded-lg hover:bg-black/10 transition-colors">
-<Image src="/logo.svg" alt="Digital Store" width={160} height={50} style={{ height: '40px', width: 'auto' }} />
-</Link>
-        <Link href="/manage" className="flex items-center gap-1.5 text-sm font-semibold text-stone-700 hover:bg-black/10 px-3 py-2.5 rounded-lg transition-colors">
-          <i className="ti ti-package text-base" aria-hidden="true" />
-          My Products
-        </Link>
-        <Link href="/cart" className="flex items-center gap-1.5 text-sm font-semibold text-stone-700 hover:bg-black/10 px-3 py-2.5 rounded-lg transition-colors">
-          <i className="ti ti-shopping-cart text-base" aria-hidden="true" />
-          Cart
-        </Link>
-      </div>
+      <nav className="relative flex items-center px-4 md:px-6 py-4 md:py-6 bg-[#9cb3b8] border-b border-black/10">
 
-      <div className="flex-1 w-[500px] absolute left-1/2 -translate-x-1/2">
-        <SearchInput />
-      </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <Link href="/" className="flex items-center px-2 md:px-3 py-2.5 rounded-lg hover:bg-black/10 transition-colors">
+            <Image src="/logo.svg" alt="Digital Store" width={160} height={50} style={{ height: '36px', width: 'auto' }} className="md:!h-10" />
+          </Link>
 
-      <div className="flex items-center gap-2 shrink-0 ml-auto">
-        {isLoggedIn ? (
-          <div className="flex items-center gap-1 shrink-0">         
-<button
-  onClick={handleSignOut}
-  className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2 rounded-lg transition-colors"
->
-  Sign out
-</button></div>
-        ) : (
-          <>
-            <Link href="/login"  className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2 rounded-lg transition-colors">
-              Sign in
-            </Link>
-            <Link href="/sign-up" className="text-sm font-semibold text-white bg-stone-800 hover:bg-stone-700 px-5 py-2.5 rounded-lg transition-colors">
-              Sign up
-            </Link>
-          </>
-        )}
-      </div>
-    </nav>
-     {showLogin && (
-      <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center"
-        onClick={() => setShowLogin(false)}
-      >
-        <div onClick={(e) => e.stopPropagation()}>
-          <LoginForm onClose={() => setShowLogin(false)} />
+        
+          <Link href="/manage" className="hidden md:flex items-center gap-1.5 text-sm font-semibold text-stone-700 hover:bg-black/10 px-3 py-2.5 rounded-lg transition-colors">
+            <i className="ti ti-package text-base" aria-hidden="true" />
+            My Products
+          </Link>
+          <Link href="/cart" className="hidden md:flex items-center gap-1.5 text-sm font-semibold text-stone-700 hover:bg-black/10 px-3 py-2.5 rounded-lg transition-colors">
+            <i className="ti ti-shopping-cart text-base" aria-hidden="true" />
+            Cart
+          </Link>
         </div>
-      </div>
-    )}
+
+       
+        <div className="hidden md:block flex-1 w-[500px] absolute left-1/2 -translate-x-1/2">
+          <SearchInput />
+        </div>
+
+
+        <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto">
+          {isLoggedIn ? (
+            <button
+              onClick={handleSignOut}
+              className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2 rounded-lg transition-colors"
+            >
+              Sign out
+            </button>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2 rounded-lg transition-colors">
+                Sign in
+              </Link>
+              <Link href="/sign-up" className="text-sm font-semibold text-white bg-stone-800 hover:bg-stone-700 px-5 py-2.5 rounded-lg transition-colors">
+                Sign up
+              </Link>
+            </>
+          )}
+        </div>
+
+       
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden ml-auto p-2.5 rounded-lg hover:bg-black/10 transition-colors"
+          aria-label="Toggle menu"
+        >
+          <i className={`ti ${mobileMenuOpen ? 'ti-x' : 'ti-menu-2'} text-2xl text-stone-700`} aria-hidden="true" />
+        </button>
+      </nav>
+
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-[#9cb3b8] border-b border-black/10 px-4 py-4 space-y-3">
+          <SearchInput />
+
+          <div className="flex flex-col gap-1 pt-2">
+            <Link
+              href="/manage"
+              onClick={closeMobileMenu}
+              className="flex items-center gap-2 text-sm font-semibold text-stone-700 hover:bg-black/10 px-3 py-2.5 rounded-lg transition-colors"
+            >
+              <i className="ti ti-package text-base" aria-hidden="true" />
+              My Products
+            </Link>
+            <Link
+              href="/cart"
+              onClick={closeMobileMenu}
+              className="flex items-center gap-2 text-sm font-semibold text-stone-700 hover:bg-black/10 px-3 py-2.5 rounded-lg transition-colors"
+            >
+              <i className="ti ti-shopping-cart text-base" aria-hidden="true" />
+              Cart
+            </Link>
+          </div>
+
+          <div className="flex flex-col gap-2 pt-2 border-t border-black/10">
+            {isLoggedIn ? (
+              <button
+                onClick={() => { closeMobileMenu(); handleSignOut(); }}
+                className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2.5 rounded-lg transition-colors text-center"
+              >
+                Sign out
+              </button>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={closeMobileMenu}
+                  className="text-sm font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-4 py-2.5 rounded-lg transition-colors text-center"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/sign-up"
+                  onClick={closeMobileMenu}
+                  className="text-sm font-semibold text-white bg-stone-800 hover:bg-stone-700 px-5 py-2.5 rounded-lg transition-colors text-center"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showLogin && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center"
+          onClick={() => setShowLogin(false)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <LoginForm onClose={() => setShowLogin(false)} />
+          </div>
+        </div>
+      )}
     </>
   );
 }
-
