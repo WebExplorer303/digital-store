@@ -85,7 +85,6 @@ export default function ProductGrid() {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-cyan-400 font-bold text-base sm:text-lg">${item.price}</span>
-                  <span className="hidden sm:inline text-xs text-slate-500 font-medium">Instant download</span>
                 </div>
               </div>
 
