@@ -16,6 +16,7 @@ export default function ProductsDashboard() {
   const [authReady, setAuthReady] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(authClient, (user) => {
@@ -77,6 +78,7 @@ export default function ProductsDashboard() {
       if (alreadyExists) return prev;
       return [{ ...newProduct }, ...prev];
     });
+    setShowAddForm(false);
   };
 
   useEffect(() => {
@@ -96,7 +98,23 @@ export default function ProductsDashboard() {
 
         <div>
           <div className="lg:sticky lg:top-6">
-            <NewProductForm onSuccess={handleAddProductToList} />
+            <div className="border border-slate-800 rounded-xl bg-slate-900 overflow-hidden">
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="w-full flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 text-left"
+              >
+                <span className="font-bold text-sm sm:text-base text-white">Add a product</span>
+                <i className={`ti ${showAddForm ? 'ti-chevron-up' : 'ti-chevron-down'} text-lg text-slate-400 transition-transform`} aria-hidden="true" />
+              </button>
+
+              {showAddForm && (
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5 border-t border-slate-800">
+                  <div className="pt-4">
+                    <NewProductForm onSuccess={handleAddProductToList} />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
