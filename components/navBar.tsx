@@ -18,6 +18,7 @@ interface NavbarProps {
 export default function Navbar({ isLoggedIn }: NavbarProps) {
   const [showLogin, setShowLogin] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -38,6 +39,13 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
       setShowLogin(true);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!profileMenuOpen) return;
+    const closeMenu = () => setProfileMenuOpen(false);
+    window.addEventListener('click', closeMenu);
+    return () => window.removeEventListener('click', closeMenu);
+  }, [profileMenuOpen]);
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
@@ -86,12 +94,33 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
 
         <div className="flex md:hidden items-center gap-1.5 ml-auto">
           {isLoggedIn ? (
-            <button
-              onClick={handleSignOut}
-              className="text-xs font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-3 py-1.5 rounded-lg transition-colors"
-            >
-              Sign out
-            </button>
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setProfileMenuOpen(!profileMenuOpen);
+                }}
+                className="flex items-center justify-center p-1.5 rounded-full hover:bg-black/10 transition-colors"
+                aria-label="Account menu"
+              >
+                <i className="ti ti-user-circle text-3xl text-stone-700" aria-hidden="true" />
+              </button>
+
+              {profileMenuOpen && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute right-0 mt-2 w-40 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden z-20"
+                >
+                  <button
+                    onClick={() => { setProfileMenuOpen(false); handleSignOut(); }}
+                    className="w-full flex items-center gap-2 text-left text-sm font-semibold text-stone-700 px-4 py-3 hover:bg-stone-100 transition-colors"
+                  >
+                    <i className="ti ti-logout text-base" aria-hidden="true" />
+                    Sign out
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <>
               <Link href="/login" className="text-xs font-bold text-slate-700 hover:text-slate-900 bg-white/40 hover:bg-white/60 px-3 py-1.5 rounded-lg transition-colors">
