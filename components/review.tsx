@@ -183,8 +183,8 @@ export default function Review({ productId }: ReviewProps) {
               onMouseLeave={() => setHoverRating(0)}
               className="p-0.5 text-2xl leading-none transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 rounded"
             >
-              <span className={star <= (hoverRating || rating) ? "text-amber-400" : "text-stone-700"}>
-                ★
+              <span className={`text-2xl ${star <= (hoverRating || rating) ? "text-amber-400" : "text-stone-500"}`}>
+                <span className="drop-shadow-sm">★</span>
               </span>
             </button>
           ))}
