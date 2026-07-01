@@ -19,7 +19,7 @@ type ReviewProps = {
 };
 
 export default function Review({ productId }: ReviewProps) {
-  const [user] = useAuthState(authClient);
+  const [user, isAuthLoading] = useAuthState(authClient);
   const currentUserId = user?.uid ?? null;
 
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -67,6 +67,10 @@ export default function Review({ productId }: ReviewProps) {
     setError(null);
     setSuccessMessage(null);
 
+    if (!currentUserId) {
+      setError("You need to sign in to leave a review.");
+      return;
+    }
     if (rating === 0) {
       setError("Pick a star rating before submitting.");
       return;
@@ -128,6 +132,10 @@ export default function Review({ productId }: ReviewProps) {
   async function handleSaveEdit(id: string) {
     setEditError(null);
 
+    if (!currentUserId) {
+      setEditError("You need to sign in to edit your review.");
+      return;
+    }
     if (editRating === 0) {
       setEditError("Pick a star rating.");
       return;
@@ -165,53 +173,69 @@ export default function Review({ productId }: ReviewProps) {
       setIsSavingEdit(false);
     }
   }
+
   return (
     <section className="w-full space-y-8">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <h2 className="text-sm uppercase tracking-widest font-semibold text-white-500">
-          Write a review
-        </h2>
-
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHoverRating(star)}
-              onMouseLeave={() => setHoverRating(0)}
-              className="p-0.5 text-2xl leading-none transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 rounded"
-            >
-              <span className={`text-2xl ${star <= (hoverRating || rating) ? "text-amber-400" : "text-stone-500"}`}>
-                <span className="drop-shadow-sm">★</span>
-              </span>
-            </button>
-          ))}
-          {rating > 0 && (
-            <span className="ml-2 text-xs text-stone-500">{rating} of 5</span>
-          )}
+      {isAuthLoading ? (
+        <div className="rounded-xl border border-stone-800 bg-stone-900/50 p-4">
+          <p className="text-sm text-stone-500">Checking your session…</p>
         </div>
+      ) : currentUserId ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h2 className="text-sm uppercase tracking-widest font-semibold text-white-500">
+            Write a review
+          </h2>
 
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="What did you think?"
-          rows={3}
-          className="w-full resize-none rounded-xl border border-stone-800 bg-stone-700 p-3 text-sm text-white-200 placeholder:text-white-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
-        />
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHoverRating(star)}
+                onMouseLeave={() => setHoverRating(0)}
+                className="p-0.5 text-2xl leading-none transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 rounded"
+              >
+                <span className={`text-2xl ${star <= (hoverRating || rating) ? "text-amber-400" : "text-stone-500"}`}>
+                  <span className="drop-shadow-sm">★</span>
+                </span>
+              </button>
+            ))}
+            {rating > 0 && (
+              <span className="ml-2 text-xs text-stone-500">{rating} of 5</span>
+            )}
+          </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
-        {successMessage && <p className="text-sm text-emerald-400">{successMessage}</p>}
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="What did you think?"
+            rows={3}
+            className="w-full resize-none rounded-xl border border-stone-800 bg-stone-700 p-3 text-sm text-white-200 placeholder:text-white-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
+          />
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-bold text-stone-950 transition-colors hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-stone-700 disabled:text-stone-500"
-        >
-          {isSubmitting ? "Submitting…" : "Submit review"}
-        </button>
-      </form>
+          {error && <p className="text-sm text-red-400">{error}</p>}
+          {successMessage && <p className="text-sm text-emerald-400">{successMessage}</p>}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-bold text-stone-950 transition-colors hover:bg-amber-300 disabled:cursor-not-allowed disabled:bg-stone-700 disabled:text-stone-500"
+          >
+            {isSubmitting ? "Submitting…" : "Submit review"}
+          </button>
+        </form>
+      ) : (
+        <div className="space-y-2 rounded-xl border border-stone-800 bg-stone-900/50 p-4">
+          <h2 className="text-sm uppercase tracking-widest font-semibold text-stone-500">
+            Write a review
+          </h2>
+          <p className="text-sm text-stone-400">
+            Sign in to leave a review for this product.
+          </p>
+        </div>
+      )}
 
       <div className="space-y-4 border-t border-stone-800 pt-8">
         <h2 className="text-sm uppercase tracking-widest font-semibold text-stone-500">
