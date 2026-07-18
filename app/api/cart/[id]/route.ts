@@ -7,8 +7,6 @@ export async function DELETE(
 ) {
   const { id } = await params;
 
-  console.log("DELETE hit for id:", id);
-
   try {
     const sessionCookie = request.cookies.get("__session")?.value;
     if (!sessionCookie) {

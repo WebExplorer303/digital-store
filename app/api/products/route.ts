@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       category,
       imageUrl: imageUrl || '',
       downloadUrl: downloadUrl || '',
+      ownedBy: [sellerId],
       sellerId,
       createdAt: new Date(),
     };
