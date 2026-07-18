@@ -54,26 +54,21 @@ export default function CheckoutPage() {
   }, [router]);
  
 const handlePlaceOrder = async () => {
-  const cartItems = await fetchCart();
-  const auth = getAuth();
-const currentUser = auth.currentUser;
-  if (!currentUser) { router.push("/login"); return; } 
-  const updatePromises = cartItems.map((item: CartItem) => {
-    const productRef = doc(db, "products", item.productId);
-    return updateDoc(productRef, {
-      ownedBy: arrayUnion(currentUser.uid)
-    });
-  });
+  setIsPlacingOrder(true);
+  try {
+    const res = await fetch("/api/checkout", { method: "POST" });
+    if (res.status === 401) { router.push("/login"); return; }
+    if (!res.ok) throw new Error("Failed to place order");
 
-  await Promise.all(updatePromises);
-for (const item of cartItems) {
-  await fetch(`/api/cart/${item.productId}`, { method: "DELETE" });
-}
-    setShowSuccess(true); 
-  setTimeout(() => {
-    router.push("/"); 
-  }, 2000);
-
+    setShowSuccess(true);
+    setTimeout(() => {
+      router.push("/");
+    }, 2000);
+  } catch {
+    setError("Something went wrong placing your order.");
+  } finally {
+    setIsPlacingOrder(false);
+  }
 };
  
   const subtotal = items.reduce((sum, item) => sum + item.price, 0);
