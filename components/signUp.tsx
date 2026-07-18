@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { authClient } from '@/lib/firebase';
-import { requestNotificationPermission } from '../lib/fcm';
 
 export default function SignupForm() {
   const [email, setEmail] = useState('');
@@ -37,17 +36,7 @@ export default function SignupForm() {
 
       if (!response.ok) throw new Error('Could not initialize secure session.');
 
-      const fcmDeviceToken = await requestNotificationPermission();
-
-      if (fcmDeviceToken) {
-        await fetch('/api/subscribe-topic', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: fcmDeviceToken }),
-        });
-      }
-
-      window.location.href = '/dashboard';
+      window.location.href = '/';
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/email-already-in-use') {
